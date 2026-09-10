@@ -9,12 +9,12 @@ import Foundation
 
 /// Контракт для ViewModel: доменные модели на выходе, никаких URL и JSON.
 /// ViewModel зависит от протокола, поэтому в тестах/превью подменяется стабом.
-nonisolated protocol NewsService: Sendable {
+protocol NewsService: Sendable {
 	func fetchArticles(limit: Int, skip: Int) async throws -> [Article]
 	func fetchArticle(id: Int) async throws -> Article
 }
 
-nonisolated extension NewsService {
+extension NewsService {
 	/// Дефолты для первой страницы (в протоколе default-аргументы недоступны).
 	func fetchArticles() async throws -> [Article] {
 		try await fetchArticles(limit: 20, skip: 0)
@@ -23,7 +23,7 @@ nonisolated extension NewsService {
 
 /// Реализация поверх нашего API. Единственное, что она делает:
 /// выбирает эндпоинт, дергает `APIClient` и маппит DTO -> домен.
-nonisolated final class NewsAPIService: NewsService {
+final class NewsAPIService: NewsService {
 	private let apiClient: APIClient
 
 	init(apiClient: APIClient = DefaultAPIClient()) {

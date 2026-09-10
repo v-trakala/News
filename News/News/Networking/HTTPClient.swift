@@ -15,22 +15,18 @@ import Foundation
 ///  - сюда, и только сюда, потом добавляются retry / логирование / метрики;
 ///  - URLSession можно заменить (background session, gRPC-мост, mock-сервер)
 ///    не трогая ни один сервис.
-///
-/// `nonisolated`: в проекте включен `SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor`,
-/// то есть по умолчанию весь код исполняется на главном акторе. Сетевой слой
-/// и сервисы явно выводятся из-под MainActor, чтобы парсинг и ожидание ответа
-/// не занимали главный поток. UI и ViewModel, наоборот, остаются на MainActor.
-nonisolated protocol HTTPClient: Sendable {
+
+protocol HTTPClient: Sendable {
 	func perform(_ request: URLRequest) async throws -> (Data, HTTPURLResponse)
 }
 
-nonisolated final class URLSessionHTTPClient: HTTPClient {
+final class URLSessionHTTPClient: HTTPClient {
 	private let session: URLSession
-
+	
 	init(session: URLSession = .shared) {
 		self.session = session
 	}
-
+	
 	func perform(_ request: URLRequest) async throws -> (Data, HTTPURLResponse) {
 		do {
 			let (data, response) = try await session.data(for: request)
@@ -43,3 +39,6 @@ nonisolated final class URLSessionHTTPClient: HTTPClient {
 		}
 	}
 }
+
+
+

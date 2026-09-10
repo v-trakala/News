@@ -10,7 +10,7 @@ import Foundation
 /// Состояние асинхронной загрузки одним значением вместо трех независимых
 /// (`isLoading` + `data` + `error`), которые легко привести в невозможную
 /// комбинацию (грузим и уже есть ошибка и данные одновременно).
-nonisolated enum LoadingState<Value> {
+enum LoadingState<Value>: Sendable {
 	case idle
 	case loading
 	case loaded(Value)

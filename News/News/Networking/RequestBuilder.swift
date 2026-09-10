@@ -16,14 +16,14 @@ import Foundation
 ///  - здесь одно место для «общих» заголовков: Accept, App-Version,
 ///    Accept-Language, а на следующих этапах — Authorization;
 ///  - `APIClient` перестает знать про baseURL и правила формирования URL.
-nonisolated protocol RequestBuilder: Sendable {
+protocol RequestBuilder: Sendable {
 	func makeRequest(for endpoint: Endpoint) throws -> URLRequest
 }
 
-nonisolated final class DefaultRequestBuilder: RequestBuilder {
+final class DefaultRequestBuilder: RequestBuilder {
 	private let baseURL: URL
 	private let defaultHeaders: [String: String]
-
+	
 	init(
 		baseURL: URL = APIConfiguration.baseURL,
 		defaultHeaders: [String: String] = ["Accept": "application/json"]
@@ -31,7 +31,7 @@ nonisolated final class DefaultRequestBuilder: RequestBuilder {
 		self.baseURL = baseURL
 		self.defaultHeaders = defaultHeaders
 	}
-
+	
 	func makeRequest(for endpoint: Endpoint) throws -> URLRequest {
 		guard var components = URLComponents(
 			url: baseURL.appending(path: endpoint.path),
@@ -39,23 +39,21 @@ nonisolated final class DefaultRequestBuilder: RequestBuilder {
 		) else {
 			throw APIError.invalidURL
 		}
-
+		
 		if !endpoint.query.isEmpty {
-			// Сортировка — чтобы URL был детерминированным и его можно было
-			// сравнивать в тестах (у словаря порядок не определен).
 			components.queryItems = endpoint.query
 				.sorted { $0.key < $1.key }
 				.map { URLQueryItem(name: $0.key, value: $0.value) }
 		}
-
+		
 		guard let url = components.url else {
 			throw APIError.invalidURL
 		}
-
+		
 		var request = URLRequest(url: url)
 		request.httpMethod = endpoint.method.rawValue
 		request.httpBody = endpoint.body
-
+		
 		// Заголовки эндпоинта важнее дефолтных — поэтому применяем их вторыми.
 		for (field, value) in defaultHeaders {
 			request.setValue(value, forHTTPHeaderField: field)
@@ -66,7 +64,7 @@ nonisolated final class DefaultRequestBuilder: RequestBuilder {
 		if endpoint.body != nil, request.value(forHTTPHeaderField: "Content-Type") == nil {
 			request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 		}
-
+		
 		return request
 	}
 }
