@@ -12,11 +12,11 @@ import Foundation
 ///
 /// Зачем отдельный протокол:
 ///  - в тестах подменяется stub-ом (или URLProtocol) без сети;
-///  - сюда, и только сюда, потом добавляются retry / логирование / метрики;
+///  - сюда, и только сюда, добавляются retry / логирование / метрики;
 ///  - URLSession можно заменить (background session, gRPC-мост, mock-сервер)
 ///    не трогая ни один сервис.
 
-protocol HTTPClient: Sendable {
+nonisolated protocol HTTPClient: Sendable {
 	func perform(_ request: URLRequest) async throws -> (Data, HTTPURLResponse)
 }
 

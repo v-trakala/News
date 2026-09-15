@@ -16,11 +16,11 @@ import Foundation
 ///  - здесь одно место для «общих» заголовков: Accept, App-Version,
 ///    Accept-Language, а на следующих этапах — Authorization;
 ///  - `APIClient` перестает знать про baseURL и правила формирования URL.
-protocol RequestBuilder: Sendable {
+nonisolated protocol RequestBuilder: Sendable {
 	func makeRequest(for endpoint: Endpoint) throws -> URLRequest
 }
 
-final class DefaultRequestBuilder: RequestBuilder {
+nonisolated final class DefaultRequestBuilder: RequestBuilder {
 	private let baseURL: URL
 	private let defaultHeaders: [String: String]
 	
