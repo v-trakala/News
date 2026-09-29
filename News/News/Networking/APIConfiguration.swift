@@ -8,7 +8,7 @@
 import Foundation
 
 /// Все, что зависит от окружения (dev/stage/prod), живет здесь, а не размазано по сервисам.
-nonisolated enum APIConfiguration {
+enum APIConfiguration {
 	/// dummyjson.com — бесплатный публичный API без ключа.
 	/// Дает /posts (список), /posts/{id} (детали) и /auth/login — как раз то,
 	/// что нужно для этапов 0..N (пагинация, токены, refresh).

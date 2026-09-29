@@ -16,7 +16,7 @@ import Foundation
 ///  - URLSession можно заменить (background session, gRPC-мост, mock-сервер)
 ///    не трогая ни один сервис.
 
-nonisolated protocol HTTPClient: Sendable {
+protocol HTTPClient: Sendable {
 	func perform(_ request: URLRequest) async throws -> (Data, HTTPURLResponse)
 }
 

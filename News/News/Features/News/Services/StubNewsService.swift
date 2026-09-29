@@ -10,7 +10,7 @@ import Foundation
 #if DEBUG
 /// Стаб для превью и ручной проверки состояний без сети.
 /// Ровно та причина, по которой `NewsService` — протокол.
-nonisolated final class StubNewsService: NewsService {
+final class StubNewsService: NewsService {
 	private let articles: [Article]
 	private let error: Error?
 	private let delay: Duration

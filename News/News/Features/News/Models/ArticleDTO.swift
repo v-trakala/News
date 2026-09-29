@@ -9,14 +9,14 @@ import Foundation
 
 /// Транспортные модели: повторяют формат ответа dummyjson.com 1:1.
 /// Живут внутри слоя сервиса и наружу не отдаются.
-nonisolated struct ArticlesPageDTO: Decodable {
+struct ArticlesPageDTO: Decodable {
 	let posts: [ArticleDTO]
 	let total: Int
 	let skip: Int
 	let limit: Int
 }
 
-nonisolated struct ArticleDTO: Decodable {
+struct ArticleDTO: Decodable {
 	struct Reactions: Decodable {
 		let likes: Int
 		let dislikes: Int
@@ -32,7 +32,7 @@ nonisolated struct ArticleDTO: Decodable {
 	let reactions: Reactions?
 }
 
-nonisolated extension ArticleDTO {
+extension ArticleDTO {
 	func toDomain() -> Article {
 		Article(
 			id: id,

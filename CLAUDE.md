@@ -114,12 +114,18 @@ View  →  ViewModel  →  Service  →  APIClient  →  RequestBuilder + HTTPCl
 
 ## Swift 6 concurrency — жёсткие правила
 
-Проект: `SWIFT_VERSION = 6.0`, `SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor`,
-`SWIFT_APPROACHABLE_CONCURRENCY = YES`. Значит, **по умолчанию весь код на главном акторе**.
+Проект: `SWIFT_VERSION = 6.0`, `SWIFT_APPROACHABLE_CONCURRENCY = YES`. Изоляция —
+стандартная для Swift: по умолчанию ничего никуда не привязано, MainActor ставится
+только явно.
 
-- **Явная изоляция на каждом типе.** Сетевой слой, сервисы, DTO, доменные модели, `Endpoint`,
-  ошибки и вспомогательные `enum` — `nonisolated`. ViewModel — `@MainActor @Observable`.
-  Граница MainActor проходит по протоколу сервиса.
+- **Явная изоляция.** ViewModel — `@MainActor @Observable`. View — SwiftUI сам знает.
+  Всё остальное (сетевой слой, сервисы, DTO, доменные модели, `Endpoint`, ошибки,
+  вспомогательные `enum`) пишется без пометок — Swift знает, что делать. `nonisolated`
+  вручную ставить не нужно, ранее наведённый флаг `SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor`
+  снят.
+- **`Sendable` пробрасывай явно.** Generic-типы, реализующие `Sendable`, должны
+  требовать `Sendable` от параметра: `enum LoadingState<Value: Sendable>: Sendable`.
+  Без ограничения компилятор ругнётся, и правильно ругнётся.
 - **Разделяемое изменяемое состояние → `actor`.** Хранилище токена, кэш, дедупликация
   запросов — это акторы. `DispatchQueue`, `NSLock`, `os_unfair_lock`, семафоры в новом коде
   запрещены.

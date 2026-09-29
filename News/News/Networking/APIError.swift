@@ -11,7 +11,7 @@ import Foundation
 /// Смысл: наружу (в сервисы и ViewModel) не должны утекать ни `URLError`,
 /// ни `DecodingError` — иначе каждый вызывающий будет заново разбирать
 /// частные случаи URLSession.
-nonisolated enum APIError: Error, Equatable {
+enum APIError: Error, Equatable {
 	case invalidURL
 	/// Ответ не является HTTP-ответом.
 	case invalidResponse
@@ -24,7 +24,7 @@ nonisolated enum APIError: Error, Equatable {
 	case cancelled
 }
 
-nonisolated extension APIError {
+extension APIError {
 	/// Сообщение для UI. На реальном проекте здесь были бы локализованные строки.
 	var message: String {
 		switch self {
@@ -46,7 +46,7 @@ nonisolated extension APIError {
 	}
 }
 
-nonisolated extension Error {
+extension Error {
 	/// Отмена — это не ошибка для пользователя: SwiftUI отменяет `.task`
 	/// при исчезновении экрана, и показывать алерт в этот момент нельзя.
 	var isCancellation: Bool {

@@ -12,11 +12,11 @@ import Foundation
 ///
 /// Сервисы (`NewsService`, позже `AuthService`) знают только этот протокол
 /// и ничего не знают про URLSession, baseURL и заголовки.
-nonisolated protocol APIClient: Sendable {
+protocol APIClient: Sendable {
 	func send<Response: Decodable>(_ endpoint: Endpoint, as type: Response.Type) async throws -> Response
 }
 
-nonisolated final class DefaultAPIClient: APIClient {
+final class DefaultAPIClient: APIClient {
 	private let requestBuilder: RequestBuilder
 	private let httpClient: HTTPClient
 	private let decoder: JSONDecoder

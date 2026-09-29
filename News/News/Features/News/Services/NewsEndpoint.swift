@@ -14,7 +14,7 @@ import Foundation
 /// потом про профиль — и превратится в god-object вида `NetworkManager`,
 /// который зависит от всех фич сразу. Зависимости должны идти только вниз:
 /// Feature -> Networking, никогда наоборот.
-nonisolated enum NewsEndpoint {
+enum NewsEndpoint {
 	case articles(limit: Int, skip: Int)
 	case article(id: Int)
 

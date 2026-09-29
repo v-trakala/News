@@ -7,7 +7,7 @@
 
 import Foundation
 
-nonisolated enum HTTPMethod: String {
+enum HTTPMethod: String {
 	case get = "GET"
 	case post = "POST"
 	case put = "PUT"
@@ -18,7 +18,7 @@ nonisolated enum HTTPMethod: String {
 /// Описание одного запроса в терминах API, без знания про baseURL,
 /// заголовки авторизации и URLSession. Сервисы конструируют `Endpoint`,
 /// `APIClient` превращает его в `URLRequest`.
-nonisolated struct Endpoint {
+struct Endpoint {
 	let path: String
 	var method: HTTPMethod = .get
 	var query: [String: String] = [:]
