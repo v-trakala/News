@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct Application: View {
 
 	var body: some View {
 		NewsListView()
@@ -16,5 +16,5 @@ struct ContentView: View {
 }
 
 #Preview {
-	ContentView()
+	Application()
 }
