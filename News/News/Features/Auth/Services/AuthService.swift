@@ -6,37 +6,48 @@
 //
 
 
-protocol AuthService {
+protocol AuthService: Sendable {
 	func login(username: String, password: String) async throws -> AuthenticatedSession
-	func logout() async throws
-	func refreshSession() async throws -> AuthenticatedSession
+	func logout() async
+	func refreshSession() async throws
 }
 
 final class AuthServiceDummy: AuthService {
-	// `tokenStorage: AnyObject` — плейсхолдер до шага 3. Как только появится
-	// протокол `TokenStorage`, поменяем на него — и сможем реально сохранять
-	// пару токенов после логина/refresh.
-	private let tokenStorage: AnyObject
+	private let tokenStorage: TokenStorage
 	private let apiClient: APIClient
 
-	init(tokenStorage: AnyObject, apiClient: APIClient) {
+	init(tokenStorage: TokenStorage, apiClient: APIClient) {
 		self.tokenStorage = tokenStorage
 		self.apiClient = apiClient
 	}
 	
 	func login(username: String, password: String) async throws -> AuthenticatedSession {
-		return AuthenticatedSession(id: 1, username: "", firstName: "", imageURL: nil)
+		do {
+			let endpoint = AuthEndpoint.login(username: username, password: password).endpoint
+			let response = try await apiClient.send(endpoint, as: LoginResponseDTO.self)
+			
+			let tokenPair = response.toTokenPair()
+			await tokenStorage.save(tokenPair)
+			
+			return response.toSession()
+		} catch APIError.server(let code) where code == 400 {
+			throw AuthError.invalidCredentials
+		}
 	}
 	
-	func logout() async throws {
+	func logout() async {
+		await tokenStorage.clear()
+	}
+	
+	func refreshSession() async throws {
+		guard let refreshToken = await tokenStorage.load()?.refreshToken else {
+			throw AuthError.sessionExpired
+		}
 		
-	}
-	
-	func refreshSession() async throws -> AuthenticatedSession {
-		return AuthenticatedSession(id: 1, username: "", firstName: "", imageURL: nil)
-	}
-	
-	private func refresh() async throws {
+		let endpoint = AuthEndpoint.refresh(refreshToken: refreshToken).endpoint
+		let response = try await apiClient.send(endpoint, as: RefreshResponseDTO.self)
+		
+		await tokenStorage.save(response.toTokenPair())
 		
 	}
 }
