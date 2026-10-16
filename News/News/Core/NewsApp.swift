@@ -6,14 +6,15 @@
 //
 
 import SwiftUI
-import CoreData
 
-@main
-struct NewsApp: App {
-	
-    var body: some Scene {
-        WindowGroup {
-            Application()
-        }
-    }
+struct NewsApp: View {
+	let service: NewsService
+	var body: some View {
+		NewsListView(service: service)
+	}
+}
+
+
+#Preview {
+	NewsApp(service: StubNewsService())
 }

@@ -13,31 +13,34 @@ import Observation
 final class NewsListViewModel {
 	private(set) var state: LoadingState<[Article]> = .idle
 
-	private let service: NewsService
+	let service: NewsService
 
-	init(service: NewsService = NewsAPIService()) {
+	init(service: NewsService) {
 		self.service = service
 	}
 
 	func loadIfNeeded() async {
 		guard case .idle = state else { return }
-		await load()
+		state = .loading
+		await performLoad()
 	}
 
 	func reload() async {
-		await load()
+		if case .failed = state {
+			state = .loading
+		}
+		await performLoad()
 	}
 
-	private func load() async {
-		state = .loading
+	private func performLoad() async {
 		do {
 			let articles = try await service.fetchArticles()
+			//
+			try? await Task.sleep(nanoseconds: 2_000_000_000)
+			//
 			state = .loaded(articles)
 		} catch {
-			guard !error.isCancellation else {
-				state = .idle
-				return
-			}
+			guard !error.isCancellation else { return }
 			state = .failed(error.userFacingMessage)
 		}
 	}

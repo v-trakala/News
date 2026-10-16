@@ -7,14 +7,27 @@
 
 import SwiftUI
 
-struct Application: View {
-
-	var body: some View {
-		NewsListView()
+@main
+struct Application: App {
+	@State var container = AppContainer()
+	
+	var body: some Scene {
+		WindowGroup {
+			ContainerView(container: container)
+		}
 	}
-
 }
 
-#Preview {
-	Application()
+
+struct ContainerView: View {
+	let container: AppContainer
+	
+	var body: some View {
+		switch container.sessionState.state {
+		case .unauthenticated:
+			EmptyView()
+		case .authenticated(let session):
+			NewsApp(service: container.newsService)
+		}
+	}
 }
